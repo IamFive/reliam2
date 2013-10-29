@@ -11,7 +11,27 @@ from mongoengine.fields import (StringField, DateTimeField, IntField,
     FloatField)
 import datetime
 from mongoengine.document import EmbeddedDocument
-from reliam.models import Campaign
+
+
+class Stats(EmbeddedDocument):
+    
+    open = IntField(default=0)
+    click = IntField(default=0)
+    conversion = IntField(default=0)
+    revenue = IntField(default=0)
+    unsubscribe = IntField(default=0)
+    complaint = IntField(default=0)
+    
+    meta = {
+        'allow_inheritance': False
+    }
+    
+
+class StatableModel(BaseModel):
+    ''' basic model for statable documents '''
+    stats = EmbeddedDocumentField(Stats, default=Stats)
+    meta = {'abstract': True}
+    
 
 class User(BaseModel):
     """ user mongo model """
@@ -50,7 +70,7 @@ class Token(EmbeddedDocument):
 #         return t
     
         
-class Template(BaseModel):
+class Template(StatableModel):
     
     title = StringField(required=True)
     subject = StringField(required=True)
@@ -61,8 +81,12 @@ class Template(BaseModel):
         
     
 
-class Campaign(BaseModel):
+class Campaign(StatableModel):
     ''' Mongo Engine Model for campaigns '''
+    
+    #===========================================================================
+    #  TODO : Need re design 
+    #===========================================================================
     
     ###Campaign###
     #email, campaign, delivery, network, url, template, subject, from, html, text
@@ -74,16 +98,6 @@ class Campaign(BaseModel):
     text = StringField(required=True)
     tokens = ListField(EmbeddedDocumentField(Token, default=Token))
     
-    # i think those properties are set by backend
-    send_count = IntField()
-    open_count = IntField()
-    open_rate = FloatField()
-    click_count = IntField()
-    click_rate = FloatField()
-    conversions_count = IntField()
-    conversions_rate = FloatField()
-    revenue = FloatField()
-    epm = FloatField()
     
     meta = {
         'allow_inheritance' : False
