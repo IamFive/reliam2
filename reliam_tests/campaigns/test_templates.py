@@ -7,15 +7,8 @@
 import unittest
 from reliam_tests import BasicTestCase
 
-class TestCampaigns(BasicTestCase):
+class TestTemplates(BasicTestCase):
     """ """
-
-
-#     title = StringField(required=True)
-#     fromaddr = StringField(required=True)
-#     html = StringField(required=True)
-#     text = StringField(required=True)
-#     tokens = ListField(EmbeddedDocumentField(Token, default=Token()))
 
     formdata = dict(
         title='This is a sample Template',

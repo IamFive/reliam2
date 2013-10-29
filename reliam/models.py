@@ -93,11 +93,10 @@ class Campaign(StatableModel):
     
     # from wireframes, those properties will be set from frontend
     title = StringField(required=True)
-    fromaddr = StringField(required=True)
-    html = StringField(required=True)
-    text = StringField(required=True)
-    tokens = ListField(EmbeddedDocumentField(Token, default=Token))
+    template = ReferenceField(Template)
     
+    # maybe use a Enum?
+    currencies = StringField()
     
     meta = {
         'allow_inheritance' : False
