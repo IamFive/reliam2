@@ -1,0 +1,7 @@
+db.user.insert({
+    "_id": ObjectId("51935e85afc358255c817bf3"),
+    "status": 1,
+    "password": "passwd",
+    "verify_code": "mahkgF",
+    "email": "initial@abc.com"
+});
