@@ -78,6 +78,13 @@ class Template(StatableModel):
     html = StringField(required=True)
     text = StringField(required=True)
     tokens = ListField(EmbeddedDocumentField(Token, default=Token), default=[])
+    
+
+
+class Delivery(StatableModel):
+    '''
+    '''
+    
         
     
 
@@ -93,7 +100,12 @@ class Campaign(StatableModel):
     
     # from wireframes, those properties will be set from frontend
     title = StringField(required=True)
-    template = ReferenceField(Template)
+    
+    # a campaign will have several deliveries
+    deliveries = ListField(ReferenceField(Delivery))
+    
+    # a campaign can use several tpls (in any delivery)
+    template = ListField(ReferenceField(Template))
     
     # maybe use a Enum?
     currencies = StringField()
