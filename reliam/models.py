@@ -3,14 +3,17 @@
 # @author: Five
 # Created on 2013-5-14
 #
+import datetime
+
 from flask_mongoengine.wtf.orm import model_form
+from mongoengine.document import EmbeddedDocument
+from mongoengine.fields import StringField, DateTimeField, IntField, \
+    ReferenceField, ListField, EmbeddedDocumentField, EmailField, URLField, \
+    FloatField
+
+from reliam.choices import Currency
 from reliam.common.orm import BaseModel
 from reliam.constants import DEFAULT_FORM_EXCLUDE
-from mongoengine.fields import (StringField, DateTimeField, IntField,
-    ReferenceField, ListField, EmbeddedDocumentField, EmailField, URLField,
-    FloatField)
-import datetime
-from mongoengine.document import EmbeddedDocument
 
 
 class Stats(EmbeddedDocument):
@@ -73,19 +76,16 @@ class Token(EmbeddedDocument):
 class Template(StatableModel):
     
     title = StringField(required=True)
-    subject = StringField(required=True)
-    fromaddr = StringField(required=True)
+    subject = ListField(StringField(required=True))
+    fromaddr = ListField(StringField(required=True), required=True)
     html = StringField(required=True)
     text = StringField(required=True)
     tokens = ListField(EmbeddedDocumentField(Token, default=Token), default=[])
     
 
-
 class Delivery(StatableModel):
     '''
     '''
-    
-        
     
 
 class Campaign(StatableModel):
@@ -96,7 +96,7 @@ class Campaign(StatableModel):
     #===========================================================================
     
     ###Campaign###
-    #email, campaign, delivery, network, url, template, subject, from, html, text
+    # email, campaign, delivery, network, url, template, subject, from, html, text
     
     # from wireframes, those properties will be set from frontend
     title = StringField(required=True)
@@ -105,10 +105,12 @@ class Campaign(StatableModel):
     deliveries = ListField(ReferenceField(Delivery))
     
     # a campaign can use several tpls (in any delivery)
-    template = ListField(ReferenceField(Template))
+    templates = ListField(ReferenceField(Template))
     
     # maybe use a Enum?
-    currencies = StringField()
+    currency = StringField(default=Currency.USD[0], choices=Currency.choices)
+    payout = FloatField()
+    
     
     meta = {
         'allow_inheritance' : False
@@ -132,7 +134,9 @@ user_form_exclude = list(DEFAULT_FORM_EXCLUDE)
 user_form_exclude.extend(('last_login_on', 'verify_code'))
 UserForm = model_form(User, exclude=user_form_exclude)
 
-tpl_form_exclude = list(DEFAULT_FORM_EXCLUDE) + ['tokens',]
+tpl_form_exclude = list(DEFAULT_FORM_EXCLUDE) + ['tokens', ]
 TemplateForm = model_form(Template, exclude=tpl_form_exclude)
 
-CampaignForm = model_form(Campaign, exclude=DEFAULT_FORM_EXCLUDE)
+
+campaign_form_exclude = list(DEFAULT_FORM_EXCLUDE) + ['deliveries', 'templates', 'payout']
+CampaignForm = model_form(Campaign, exclude=campaign_form_exclude)

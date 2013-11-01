@@ -9,9 +9,11 @@ from flask.blueprints import Blueprint
 from flask.globals import g, request
 
 from reliam.common.interceptors import no_auth_required
+from reliam.common.orm import PaginateHelper
 from reliam.common.web.renderer import smart_render
 from reliam.constants import DEFAULT_RENDER_EXCLUDE
 from reliam.models import Template, TemplateForm, Token
+from flask_login import current_user
 
 
 bp_template = Blueprint('template', __name__)
@@ -54,14 +56,16 @@ def create_template():
 @bp_template.route('/<template_id>', methods=['PUT'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def update_template(template_id):
-    template = Template.objects.get_or_404(id=template_id)
+    template = Template.objects.get_or_404(id=template_id,
+                                           created_by=current_user.id)
     return save_or_update(template)
 
 
 @bp_template.route('/<template_id>', methods=['DELETE'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def delete_template(template_id):
-    template = Template.objects.get_or_404(id=template_id)
+    template = Template.objects.get_or_404(id=template_id,
+                                           created_by=current_user.id)
     template.delete()
     return True
 
@@ -70,7 +74,8 @@ def delete_template(template_id):
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def get_template_list():
     paginate = Template.objects.paginate(
-        exclude=DEFAULT_RENDER_EXCLUDE
+        exclude=DEFAULT_RENDER_EXCLUDE,
+        where=PaginateHelper.owner_mixin_filter()
     )
     return paginate
 
@@ -78,7 +83,8 @@ def get_template_list():
 @bp_template.route('/<template_id>', methods=['GET'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def get_template(template_id):
-    template = Template.objects.get_or_404(id=template_id)
+    template = Template.objects.get_or_404(id=template_id,
+                                           created_by=current_user.id)
     return template
 
 
@@ -87,7 +93,8 @@ def get_template(template_id):
 def update_token(template_id):
     ''' blueprint for update token '''
     
-    template = Template.objects.get_or_404(id=template_id)
+    template = Template.objects.get_or_404(id=template_id,
+                                           created_by=current_user.id)
     
     formjson = json.loads(request.data)
     tokens = [Token.from_json(json.dumps(token))

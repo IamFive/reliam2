@@ -15,4 +15,12 @@ class Boolean(object):
     YES = '1'
     NO = '0'
     choices = (YES, NO)
+    
+    
+class Currency(object):
+    
+    USD = ('USD', 'USD')
+    CAD = ('CAD', 'CAD')
+    
+    choices = (USD, CAD)
 

@@ -12,8 +12,8 @@ class TestTemplates(BasicTestCase):
 
     formdata = dict(
         title='This is a sample Template',
-        subject="email sample",
-        fromaddr='from@from.com',
+        subject=["email sample"],
+        fromaddr=['from@from.com'],
         html='This is html content',
         text='This is text content',
         tokens=[

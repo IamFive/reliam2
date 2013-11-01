@@ -70,8 +70,8 @@ def init_bp_modules():
     from reliam.views.profile import bp_profile
     app.register_blueprint(bp_profile, url_prefix='/api/profile')
     
-    from reliam.views.campaigns import bp_campaign
-    app.register_blueprint(bp_campaign, url_prefix='/api/campaigns')
+    from reliam.views.campaigns import bp_campaigns
+    app.register_blueprint(bp_campaigns, url_prefix='/api/campaigns')
     
     from reliam.views.templates import bp_template
     app.register_blueprint(bp_template, url_prefix='/api/templates')

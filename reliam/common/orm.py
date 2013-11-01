@@ -20,6 +20,7 @@ from flask_login import current_user
 from mongoengine.document import EmbeddedDocument
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, \
     ValidationError
+from mongoengine.base.fields import ObjectIdField
 
 class PaginateHelper():
 
@@ -66,6 +67,7 @@ class BaseQuerySetMixin(BaseQuerySet):
         paginate = PaginationMixin(querySet, page, limit)
         return paginate.to_dict()
 
+
 class PaginationMixin(Pagination):
 
     def __init__(self, iterable, page, limit):
@@ -99,8 +101,8 @@ class BaseModel(Document):
     created = DateTimeField(default=datetime.now)
     modified = DateTimeField(default=datetime.now)
 
-    created_by = StringField()
-    modified_by = StringField()
+    created_by = ObjectIdField()
+    modified_by = ObjectIdField()
 
     status = IntField(default=Status.VALID)
 

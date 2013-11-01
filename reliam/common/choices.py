@@ -15,6 +15,7 @@ class DataSource(object):
     GETCLEVER = 'GetClever'
     SYSTEM = 'System'
     choices = (GETCLEVER, SYSTEM)
+    
 
 class Status(object):
     INVALID = 0

@@ -34,3 +34,5 @@
 EMAIL_DUPLICATE = (409, 'email {} exists.')
 ENP_REQUIRED = (406, 'email,name,passwd is required.')
 LOGIN_FAILED = (406, 'Wrong email or wrong passwd.')
+
+INVALID_PARAM = (406, 'parameter {0!s} is invalid.')
