@@ -76,7 +76,7 @@ def get_campaign(campaign_id):
 
 
 
-@bp_campaigns.route('/<campaign_id>/tpl/<tpl_id>', methods=['POST', 'DELETE'])
+@bp_campaigns.route('/<campaign_id>/tpls/<tpl_id>', methods=['POST', 'DELETE'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def add_tpl(campaign_id, tpl_id):
     '''
