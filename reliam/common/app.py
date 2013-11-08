@@ -30,6 +30,8 @@ from reliam.constants import ROOT, STATIC_URL_PATH
 
 import json
 import os
+from reliam.common.middleware.crossdomain import CrossOriginResourceSharing
+import re
 
 
 app = None
@@ -91,6 +93,8 @@ def init_login_manager():
     login_manager = LoginManager()
     login_manager.setup_app(app)
     login_manager.user_callback = load_user
+    login_manager.REMEMBER_COOKIE_DOMAIN = load_user
+    
 
 def init_jinja_env():
     app.context_processor(utility_processor)
@@ -173,6 +177,17 @@ def setup_flask_initial_options():
 
 
 
+def init_middlewares():
+    allowed = (
+        'http://localhost:9000/',  # Exact String Compare
+        re.compile("^http([s]*):\/\/localhost([\:\d]*)$"),  # Match a regex
+    )
+    
+    # Add Access Control Header
+    cors = CrossOriginResourceSharing(app)
+    cors.set_allowed_origins(*allowed)
+
+
 def startup_app():
 
     # initial settings first, or change to use confd like curupira?
@@ -193,6 +208,9 @@ def startup_app():
             init_error_handler()
             init_login_manager()
             init_interceptors()
+            
+            # middle ware is the same as interceptor indeed, :)
+            init_middlewares()
             init_bp_modules()
             app.logger.info('Start success from ROOT [%s]', ROOT)
         except Exception, e:
