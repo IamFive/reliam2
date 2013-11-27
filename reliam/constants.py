@@ -10,4 +10,4 @@ BASE = os.path.abspath(os.path.join(ROOT, '..'))
 STATIC_URL_PATH = '/static'
 
 DEFAULT_FORM_EXCLUDE = ('id', 'created_by', 'modified_by', 'created', 'modified', '_cls', '_types', 'status')
-DEFAULT_RENDER_EXCLUDE = ('created_by', 'modified_by', 'created', 'modified')
+DEFAULT_RENDER_EXCLUDE = ('created_by', 'modified_by')

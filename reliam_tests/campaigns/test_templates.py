@@ -13,12 +13,16 @@ class TestTemplates(BasicTestCase):
     formdata = dict(
         title='This is a sample Template',
         subject=["email sample"],
-        fromaddr=['from@from.com'],
+        fromaddrs=['from@from.com'],
         html='This is html content',
         text='This is text content',
         tokens=[
-            dict(name='token1',values=['v1','v2']),
-            dict(name='token2',values=['v11','v22'])
+            dict(name='token1', values=['v1', 'v2']),
+            dict(name='token2', values=['v11', 'v22'])
+        ],
+        tokenss=[
+            dict(name='token1', values=['v1', 'v2']),
+            dict(name='token2', values=['v11', 'v22'])
         ]
     )
 
@@ -30,7 +34,7 @@ class TestTemplates(BasicTestCase):
     def test_post(self):
         template = self.post()
         self.assertEqual(template['title'], self.formdata['title'])
-        self.assertEqual(template['fromaddr'], self.formdata['fromaddr'])
+        self.assertEqual(template['fromaddrs'], self.formdata['fromaddrs'])
         self.assertEqual(template['html'], self.formdata['html'])
 
 
@@ -87,16 +91,16 @@ class TestTemplates(BasicTestCase):
         template = self.post()
         path = self.bp_template_path + template['_id'] + '/tokens'
         
-        tokens=dict(tokens=[
-            dict(name='token3',values=['v4']),
-            dict(name='token4',values=['v44'])
+        tokens = dict(tokens=[
+            dict(name='token3', values=['v4']),
+            dict(name='token4', values=['v44'])
         ])
         
         result = self.request('put', path, tokens)
         self.assertTrue(result)
         
         
-        newtpl = self.request('get', self.bp_template_path+template['_id'])
+        newtpl = self.request('get', self.bp_template_path + template['_id'])
         self.assertEqual(newtpl.get('tokens'), tokens.get('tokens'))
         
         

@@ -14,6 +14,7 @@ from reliam.common.web.renderer import smart_render
 from reliam.constants import DEFAULT_RENDER_EXCLUDE
 from reliam.models import Template, TemplateForm, Token
 from flask_login import current_user
+from reliam.common.exceptions import FriendlyException
 
 
 bp_template = Blueprint('template', __name__)
@@ -38,8 +39,11 @@ def save_or_update(template, formdata=None):
                 for token in formjson.pop('tokens')]
     
     template_form = TemplateForm(g.formdata)
-    template_form.populate_obj(template)
+    if not template_form.validate():
+        raise FriendlyException(100, template_form.errors)
     
+    template_form.populate_obj(template)
+    # TODO need to validate tokens
     template.tokens = tokens
     template.save()
     

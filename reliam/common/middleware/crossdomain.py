@@ -57,7 +57,7 @@ class CrossOriginResourceSharing(object):
         self.allowed_origins.append(pattern)
     
     def allow_origin(self, response, origin):
-        headers = request.headers.get('Access-Control-Request-Headers', "")
+        headers = request.headers.get('Access-Control-Request-Headers', "origin, x-requested-with, content-type, accept")
         response.headers['Access-Control-Allow-Headers'] = headers
         response.headers['Access-Control-Allow-Origin'] = origin
         response.headers['Access-Control-Allow-Credentials'] = 'true' if self.allow_credentials else 'false'

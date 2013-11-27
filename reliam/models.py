@@ -76,8 +76,8 @@ class Token(EmbeddedDocument):
 class Template(StatableModel):
     
     title = StringField(required=True)
-    subject = ListField(StringField(required=True))
-    fromaddr = ListField(StringField(required=True), required=True)
+    subjects = ListField(StringField(required=True))
+    fromaddrs = ListField(StringField(required=True), required=True)
     html = StringField(required=True)
     text = StringField(required=True)
     tokens = ListField(EmbeddedDocumentField(Token, default=Token), default=[])

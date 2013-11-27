@@ -179,6 +179,7 @@ def setup_flask_initial_options():
 
 def init_middlewares():
     allowed = (
+        'http://127.0.0.1:9000/',
         'http://localhost:9000/',  # Exact String Compare
         re.compile("^http([s]*):\/\/localhost([\:\d]*)$"),  # Match a regex
     )

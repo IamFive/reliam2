@@ -49,7 +49,7 @@ class BaseQuerySetMixin(BaseQuerySet):
         where = where if where else json.loads(form_data.get('where', '{}'))
         limit = int(limit if limit else form_data.get('limit', 20))
         page = int(page if page else form_data.get('page', 1))
-        sort = sort if sort else form_data.get('sort', None)
+        sort = sort if sort else form_data.get('sort', '-modified')
 
         if limit <= 0 or limit > 200 or page <= 0:
             raise FriendlyException.from_error_code(error_code.INVALID_PAGINATE)
