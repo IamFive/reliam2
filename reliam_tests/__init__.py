@@ -21,6 +21,7 @@ class BasicTestCase(TestCase):
     bp_profile_path = '/api/profile/'
     bp_template_path = '/api/templates/'
     bp_campaigns_path = '/api/campaigns/'
+    bp_recipients_path = '/api/recipients/'
 
     def __init__(self, *args, **kwargs):
         super(BasicTestCase, self).__init__(*args, **kwargs)

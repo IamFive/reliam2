@@ -18,12 +18,14 @@ from reliam.constants import DEFAULT_FORM_EXCLUDE
 
 class Stats(EmbeddedDocument):
     
+    sent = IntField(default=0)
     open = IntField(default=0)
     click = IntField(default=0)
     conversion = IntField(default=0)
     revenue = IntField(default=0)
     unsubscribe = IntField(default=0)
     complaint = IntField(default=0)
+    epm = FloatField(default=0)
     
     meta = {
         'allow_inheritance': False
@@ -51,6 +53,11 @@ class User(BaseModel):
     meta = {
         'allow_inheritance' : False
     }
+    
+class Recipient(StatableModel):
+    ''' recipient mongo model '''
+    
+    email = EmailField(required=True)
     
     
 class Token(EmbeddedDocument):
@@ -134,9 +141,10 @@ user_form_exclude = list(DEFAULT_FORM_EXCLUDE)
 user_form_exclude.extend(('last_login_on', 'verify_code'))
 UserForm = model_form(User, exclude=user_form_exclude)
 
+RecipientForm = model_form(Recipient, exclude=DEFAULT_FORM_EXCLUDE)
+
 tpl_form_exclude = list(DEFAULT_FORM_EXCLUDE) + ['tokens', ]
 TemplateForm = model_form(Template, exclude=tpl_form_exclude)
-
 
 campaign_form_exclude = list(DEFAULT_FORM_EXCLUDE) + ['deliveries', 'templates', 'payout']
 CampaignForm = model_form(Campaign, exclude=campaign_form_exclude)

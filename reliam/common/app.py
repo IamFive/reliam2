@@ -21,16 +21,15 @@ from reliam.common.exceptions import FriendlyException
 from reliam.common.flask_login_ext import load_user
 from reliam.common.interceptors import no_auth_required, setup_auth_interceptor, \
     setup_formdata_interceptor, setup_render_as_interceptor
+from reliam.common.middleware.crossdomain import CrossOriginResourceSharing
 from reliam.common.tools.env import ResourceLoader
 from reliam.common.tools.utils import mkdirs
 from reliam.common.web.context_processor import utility_processor
 from reliam.common.web.renderer import smart_render, JsonResp, RenderFormat, \
     ContentType
 from reliam.constants import ROOT, STATIC_URL_PATH
-
 import json
 import os
-from reliam.common.middleware.crossdomain import CrossOriginResourceSharing
 import re
 
 
@@ -71,6 +70,9 @@ def init_bp_modules():
 
     from reliam.views.profile import bp_profile
     app.register_blueprint(bp_profile, url_prefix='/api/profile')
+    
+    from reliam.views.recipients import bp_recipients
+    app.register_blueprint(bp_recipients, url_prefix='/api/recipients')
     
     from reliam.views.campaigns import bp_campaigns
     app.register_blueprint(bp_campaigns, url_prefix='/api/campaigns')
