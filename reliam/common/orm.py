@@ -95,6 +95,15 @@ class PaginationMixin(Pagination):
             'total' : self.total,
             'data' : self.items
         }
+    
+    @staticmethod
+    def from_list(list_):
+        return {
+            'page' : 1,
+            'limit' : len(list_),
+            'total' : len(list_),
+            'data' : list_
+        }
 
 class BaseModel(Document):
 

@@ -9,7 +9,7 @@ from flask_mongoengine.wtf.orm import model_form
 from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import StringField, DateTimeField, IntField, \
     ReferenceField, ListField, EmbeddedDocumentField, EmailField, URLField, \
-    FloatField
+    FloatField, DynamicField, DictField, LongField
 
 from reliam.choices import Currency
 from reliam.common.orm import BaseModel
@@ -54,10 +54,27 @@ class User(BaseModel):
         'allow_inheritance' : False
     }
     
+    
 class Recipient(StatableModel):
     ''' recipient mongo model '''
     
     email = EmailField(required=True)
+    props = DictField()
+    
+    
+class RecipientZip(StatableModel):
+    ''' recipient zip mongo model '''
+    
+    name = StringField()
+    path = StringField()
+    upload_on = DateTimeField()
+    size = LongField()
+    
+    import_on = DateTimeField()
+    line = IntField()
+    
+    md5 = StringField()
+    
     
     
 class Token(EmbeddedDocument):

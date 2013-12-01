@@ -12,3 +12,4 @@ DEBUG = True
 MONGODB_DB = 'reliam-test'
 MONGODB_HOST = '127.0.0.1'
 
+FTP_PATH = r'E:\git\reliam2\nfs\ftp'

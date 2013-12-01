@@ -73,6 +73,8 @@ class TestRecipients(BasicTestCase):
         assert isinstance(result, dict)
         self.assertEqual(result['_id'], recipient['_id'])
         
+    def test_get_zip(self):
+        zip = self.request('get', self.bp_recipients_path + 'zip')
 
 
 if __name__ == "__main__":

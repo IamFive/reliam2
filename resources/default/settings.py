@@ -27,11 +27,14 @@ LOG_FORMAT = (
     '[%(asctime)s] %(levelname)s *%(pathname)s:%(lineno)d* : %(message)s'
 )
 
-# REST_API_DOMAIN = 'www.api.com'
+
 RAW_RESOURCE_PATH = [MEDIA_URL_PATH, STATIC_URL_PATH]
 RAW_RESOURCE_ENDWITH = ['.css', '.js', '.jpg', '.ico', '.png']
 
+# when deploy, should remove
 STATIC_FOLDER = r'E:\git\prophet\app'
+
+LEGAL_RECIPIENT_FILE_EXT = ['zip', 'txt']
 
 
 # UPLOADED_FILES_DEST = MEDIA_FOLDER
