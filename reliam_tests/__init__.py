@@ -90,13 +90,13 @@ class BasicTestCase(TestCase):
         result = json.loads(response.data)
         code_diff_message = "expect code is: %s, in fact: %s"
         msg_diff_message = "expect msg is : %s, in fact: %s"
-        self.assertEqual(result['error_code'],
+        self.assertEqual(result['code'],
                          code,
-                         code_diff_message % (code, result['error_code']))
+                         code_diff_message % (code, result['code']))
         if message:
-            self.assertEqual(result['error_msg'],
+            self.assertEqual(result['message'],
                              message,
-                             msg_diff_message % (message, result['error_msg']))
+                             msg_diff_message % (message, result['message']))
         return result
 
     def assert_error_code(self, response, error_code, *args):
@@ -111,6 +111,6 @@ class BasicTestCase(TestCase):
         data = result['data']
         assert isinstance(data, list)
         if expect_size:
-            error_msg = "length is {}, but the expert is {}".format(len(data), expect_size)
-            self.assertEqual(expect_size, len(data), error_msg)
+            message = "length is {}, but the expert is {}".format(len(data), expect_size)
+            self.assertEqual(expect_size, len(data), message)
         return data

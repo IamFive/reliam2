@@ -34,7 +34,8 @@ def setup_auth_interceptor(app):
                 'endpoints' : [],
             };
 
-            for key in app.view_functions.keys():
+            for key in sorted(app.view_functions.keys()):
+                app.logger.debug('Regist bp module: ' + key)
                 if hasattr(app.view_functions[key], '__no_auth_required__') and getattr(app.view_functions[key], '__no_auth_required__'):
                     app.auth_exclude['endpoints'].append(key);
 

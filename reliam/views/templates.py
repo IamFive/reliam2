@@ -52,7 +52,6 @@ def save_or_update(template, formdata=None):
 
 @bp_template.route('/', methods=['POST'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
-@no_auth_required()
 def create_template():
     return save_or_update(Template())
 

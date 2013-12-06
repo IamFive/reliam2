@@ -8,7 +8,7 @@
 import json
 import unittest
 
-from reliam.models import Campaign, Template, Recipient
+from reliam.models import Campaign, Template, Recipient, RecipientZip
 from reliam_tests import BasicTestCase
 
 
@@ -46,6 +46,12 @@ class Test(BasicTestCase):
         token1 = r.props.get('token1')
         token2 = r.props.get('token2')
         print r.props
+        
+    def test_insert_zip(self):
+        zip = RecipientZip()
+        zip.name = 'test.txt'
+        zip.path = 'path'
+        zip.save()
         
 if __name__ == "__main__":
     unittest.main()

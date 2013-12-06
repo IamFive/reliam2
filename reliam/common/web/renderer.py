@@ -130,18 +130,18 @@ class JsonResp(object):
         return resp
 
     @staticmethod
-    def make_failed_resp(error_code='', error_msg='', result=None):
-        resp = dict(error_code='', error_msg='')
-        resp['error_code'] = error_code
-        resp['error_msg'] = error_msg
+    def make_failed_resp(code='', message='', result=None):
+        resp = dict(code='', message='')
+        resp['code'] = code
+        resp['message'] = message
         if result:
             resp['result'] = result
         return resp
 
     @staticmethod
     def from_error_code(error_code):
-        resp = dict(error_code='', error_msg='')
-        resp['error_code'] = error_code[0]
-        resp['error_msg'] = error_code[1]
+        resp = dict(code='', message='')
+        resp['code'] = error_code[0]
+        resp['message'] = error_code[1]
         return resp
 

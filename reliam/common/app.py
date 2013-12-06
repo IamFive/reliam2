@@ -107,7 +107,6 @@ def init_error_handler():
 
 
     def handler_ex(ex, status=400):
-
         status = ex.code if ex.code >= 400 and ex.code < 500 else 400
 
         if g.rformat == RenderFormat.HTML:
@@ -152,6 +151,7 @@ def init_error_handler():
 
     @app.errorhandler(Exception)
     def exception_handler(error, status=400):
+        app.logger.exception(error)
         ex = FriendlyException(400, str(error))
         return handler_ex(ex, status)
 

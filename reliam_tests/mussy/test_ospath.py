@@ -19,13 +19,11 @@ class Test(BasicTestCase):
         files = os.listdir(ftp_folder)
         
         for root, _, files in os.walk(ftp_folder):
-            print root, files
+#             print root, files
             for f in files:
                 abs = os.path.abspath(os.path.join(root, f))
                 stats = os.stat(abs)
-                print stats.st_mtime
-                date = datetime.datetime.fromtimestamp(stats.st_mtime)
-                print date
+                print os.path.basename(abs)
             
         
 if __name__ == "__main__":

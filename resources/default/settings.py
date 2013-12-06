@@ -36,6 +36,9 @@ STATIC_FOLDER = r'E:\git\prophet\app'
 
 LEGAL_RECIPIENT_FILE_EXT = ['zip', 'txt']
 
+FTP_PATH = r'E:\git\reliam2\nfs\ftp'
+USERFILES_PATH = r'E:\git\reliam2\nfs\userfiles'
+
 
 # UPLOADED_FILES_DEST = MEDIA_FOLDER
 # UPLOADED_FILES_URL = MEDIA_URL_PATH

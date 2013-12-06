@@ -23,4 +23,13 @@ class Currency(object):
     CAD = ('CAD', 'CAD')
     
     choices = (USD, CAD)
+    
+    
+class TransferStatus(object):
+    
+    Unused = (2, 'Unused')
+    Importing = (3, 'Importing')
+    Imported = (4, 'Imported')
+    
+    choices = (Unused, Importing, Imported)
 

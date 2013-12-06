@@ -11,7 +11,7 @@ from mongoengine.fields import StringField, DateTimeField, IntField, \
     ReferenceField, ListField, EmbeddedDocumentField, EmailField, URLField, \
     FloatField, DynamicField, DictField, LongField
 
-from reliam.choices import Currency
+from reliam.choices import Currency, TransferStatus
 from reliam.common.orm import BaseModel
 from reliam.constants import DEFAULT_FORM_EXCLUDE
 
@@ -68,12 +68,20 @@ class RecipientZip(StatableModel):
     name = StringField()
     path = StringField()
     upload_on = DateTimeField()
-    size = LongField()
+    size = StringField()
+    size_ = LongField()
     
-    import_on = DateTimeField()
+    ext = StringField()  # force zip and txt?
+    
+    original_path = StringField()
+    
+    import_on = DateTimeField(default=datetime.datetime.now)
     line = IntField()
     
     md5 = StringField()
+    
+    status = IntField(default=TransferStatus.Unused[0],
+                      choices=TransferStatus.choices)
     
     
     

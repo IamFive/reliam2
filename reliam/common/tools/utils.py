@@ -2,11 +2,13 @@
 #
 # Copyright (c) 2011-2013 Woo-cupid(iampurse#vip.qq.com)
 #
-from reliam.common.exceptions import FriendlyException
-from werkzeug.datastructures import MultiDict
 import copy
+import random
+import string
 import urllib
 import urlparse
+from werkzeug.datastructures import MultiDict
+from reliam.common.exceptions import FriendlyException
 
 
 def build_url(url, params):
@@ -98,4 +100,14 @@ def mkdirs(path, is_folder=False):
         path = os.path.dirname(path)
     if not os.path.exists(os.path.abspath(path)):
         os.makedirs(os.path.abspath(path))
+        
+def random_str(size=6):
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    random_code = ''.join(random.choice(chars) for _ in xrange(0, size))
+    return random_code
 
+def random_file_name(name, size=6):
+    randomstr = random_str()
+    splited = name.split('.')
+    splited.insert(-1, randomstr)
+    return '.'.join(splited)
