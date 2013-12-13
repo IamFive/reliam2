@@ -32,7 +32,7 @@ class Resource():
 class ResourceLoader():
     """ common resource loader """
 
-    ENV_VAR_NAME = 'GC_RESOURCE_FOLDER'
+    ENV_VAR_NAME = 'RELIAM_RESOURCE_FOLDER'
 
     COVERED_FOLDER = 'default'
     DFT_BASE_FOLDER = './resources/dev'
