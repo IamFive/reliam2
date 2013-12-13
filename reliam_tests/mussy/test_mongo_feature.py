@@ -8,7 +8,8 @@
 import json
 import unittest
 
-from reliam.models import Campaign, Template, Recipient, RecipientZip
+from reliam.models import Campaign, Template, Recipient, RecipientZip, \
+    ImportTask
 from reliam_tests import BasicTestCase
 
 
@@ -52,6 +53,30 @@ class Test(BasicTestCase):
         zip.name = 'test.txt'
         zip.path = 'path'
         zip.save()
+        
+    def test_listfield(self):
+        ''' '''
+        it = ImportTask(email_col_index=0, tokens=['aa', 'bb', ''])
+        it2 = ImportTask(email_col_index=0, tokens=['aa', 'dd', ''])
+        
+        it.save()
+        it2.save()
+        
+        objs = ImportTask.objects(tokens='aa').distinct('tokens')
+        result = []
+        result.extend(objs)
+        result.append('email')
+        print result
+        
+    def test_refrence(self):
+        rz = RecipientZip()
+        rz.save()
+        it = ImportTask(email_col_index=0, tokens=['aa', 'bb', ''], zip=str(rz.id))
+        it.save()
+        
+        print it.zip
+        
+        
         
 if __name__ == "__main__":
     unittest.main()

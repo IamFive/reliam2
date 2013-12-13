@@ -3,6 +3,7 @@
 # @author: Five
 # Created on 2013-5-14
 #
+from string import lower
 
 class Gender(object):
     M = 'M'
@@ -24,12 +25,15 @@ class Currency(object):
     
     choices = (USD, CAD)
     
+class FileType(object):
     
-class TransferStatus(object):
+    ZIP = 'zip'
+    TXT = 'txt'
+    CSV = 'csv'
     
-    Unused = (2, 'Unused')
-    Importing = (3, 'Importing')
-    Imported = (4, 'Imported')
+    @staticmethod
+    def is_zip(ext):
+        return lower(ext) == FileType.ZIP
+        
     
-    choices = (Unused, Importing, Imported)
-
+    choices = (ZIP, TXT, CSV)

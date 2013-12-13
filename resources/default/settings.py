@@ -34,7 +34,7 @@ RAW_RESOURCE_ENDWITH = ['.css', '.js', '.jpg', '.ico', '.png']
 # when deploy, should remove
 STATIC_FOLDER = r'E:\git\prophet\app'
 
-LEGAL_RECIPIENT_FILE_EXT = ['zip', 'txt']
+LEGAL_RECIPIENT_FILE_EXT = ['zip', 'txt', 'csv']
 
 FTP_PATH = r'E:\git\reliam2\nfs\ftp'
 USERFILES_PATH = r'E:\git\reliam2\nfs\userfiles'

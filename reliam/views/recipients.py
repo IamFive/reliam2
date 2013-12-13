@@ -3,30 +3,43 @@
 # @author: Five
 # Created on 2013-5-24
 #
+import csv
 import datetime
 import hashlib
 import os
+from shutil import copyfile
+from string import lower
 
 from flask.blueprints import Blueprint
-from flask.globals import g, current_app
+from flask.globals import g, current_app, request
 from flask_login import current_user
 
+from reliam import error_code
 from reliam.common.exceptions import FriendlyException
 from reliam.common.orm import PaginateHelper, PaginationMixin
 from reliam.common.tools.humansize import size
+from reliam.common.tools.utils import random_file_name, mkdirs
 from reliam.common.web.renderer import smart_render
 from reliam.constants import DEFAULT_RENDER_EXCLUDE
-from reliam.models import Recipient, RecipientForm, RecipientZip
+from reliam.models import Recipient, RecipientForm, RecipientZip, ImportTask
 from reliam.projects import get_ftp_base, get_ftp_path, get_zip_path
-from reliam import error_code
-from shutil import copyfile
-from reliam.common.tools.utils import random_file_name, mkdirs
-from string import lower
-import csv
+from reliam.common.tools.files import headn
+from reliam.choices import FileType
+import zipfile
 
 
 bp_recipients = Blueprint('recipients', __name__)
 
+
+@bp_recipients.route('/tokens', methods=['GET'])
+@smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
+def get_tokens():
+    tokens = ImportTask.objects(created_by=current_user.id).distinct('tokens')
+    result = []
+    result.extend(tokens)
+    if 'email' not in result:
+        result.append('email')
+    return result
 
 def save_or_update(recipient, formdata=None):
     recipient_form = RecipientForm(formdata or g.formdata)
@@ -124,17 +137,32 @@ def transfer():
     ext = ftppath.split('.')[-1]
     
     # copy file, rename file with extra random string
-    zipfile_name = random_file_name(name)
-    zipfile_path = get_zip_path(zipfile_name)
-    mkdirs(zipfile_path)
-    copyfile(ftppath, zipfile_path)
+    sfile_name = random_file_name(name)
+    sfile_path = get_zip_path(sfile_name)
+    mkdirs(sfile_path)
+    
+    # if is zip file, we need to extract it.
+    if FileType.is_zip(ext):
+        zipfileInfo = zipfile.ZipFile(ftppath)
+        files = zipfileInfo.namelist()
+        if(len(files) != 1):
+            raise FriendlyException.fec(error_code.ZIP_FILE_CAN_ONLY_HAS_ONE_FILE)
+        
+        legal_recipient_fileext = current_app.config.get('LEGAL_RECIPIENT_FILE_EXT')
+        if files[0].split('.')[-1] not in legal_recipient_fileext:
+            raise FriendlyException.fec(error_code.FILE_TYPE_IS_NOT_ALLOW,
+                                        legal_recipient_fileext)
+            
+        zipfileInfo.extractall(sfile_path)
+        sfile_name = os.path.join(sfile_name, files[0])
+    else:
+        copyfile(ftppath, sfile_path)
     
     rz = RecipientZip(name=name, size_=size_, ext=ext, md5=md5,
                       upload_on=mtime, original_path=ftppath,
-                      path=zipfile_name, size='{0:.1S}'.format(size(size_)))
+                      path=sfile_name, size='{0:.1S}'.format(size(size_)))
     rz.save()
     return True
-    
     
 
 @bp_recipients.route('/zips', methods=['GET'])
@@ -146,14 +174,38 @@ def get_zip_list():
     )
     return paginate
 
-@bp_recipients.route('/zips/<zip_id>/import', methods=['GET'])
+
+@bp_recipients.route('/zips/<zip_id>/desc', methods=['GET'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def get_zip(zip_id):
-    zip = RecipientZip.objects.get_or_404(id=zip_id,
+    model = RecipientZip.objects.get_or_404(id=zip_id,
                                           created_by=current_user.id)
+    zip_path = get_zip_path(model.path)
+    samples = headn(zip_path, 6)
+    sniffer = csv.Sniffer()
+    dialect = sniffer.sniff(samples[-1])
+    rows = [row for row in csv.reader(samples, dialect)]
+    columns = zip(*rows)
     
-    csv.reader()
-    # TODO, need to analyse zip file
+    # we can detect token maybeqwer
+    return dict(zip_id=zip_id, tokens=[''] * len(columns), columns=columns)
+
+
+@bp_recipients.route('/zips/<zip_id>/import', methods=['POST'])
+@smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
+def import_zip(zip_id):
+    model = RecipientZip.objects.get_or_404(id=zip_id,
+                                            created_by=current_user.id)
+    tokens = request.json.get('tokens')
+    ignore_header = request.json.get('ignoreHeader')
+    email_col_index = request.json.get('emailColIdx')
     
+    # need to validate again on backend ?
     
-    return zip
+    name = 'Import file [{0}] into recipient list'.format(model.name)
+    it = ImportTask(name=name, tokens=tokens, ignore_header=ignore_header,
+                    email_col_index=email_col_index, zip=zip_id)
+    it.save()
+    # we can detect token maybe
+    
+    return it

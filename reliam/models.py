@@ -8,12 +8,13 @@ import datetime
 from flask_mongoengine.wtf.orm import model_form
 from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import StringField, DateTimeField, IntField, \
-    ReferenceField, ListField, EmbeddedDocumentField, EmailField, URLField, \
-    FloatField, DynamicField, DictField, LongField
+    ReferenceField, ListField, EmbeddedDocumentField, EmailField, \
+    FloatField, DynamicField, DictField, LongField, BooleanField
 
-from reliam.choices import Currency, TransferStatus
+from reliam.choices import Currency
 from reliam.common.orm import BaseModel
 from reliam.constants import DEFAULT_FORM_EXCLUDE
+from reliam.common.choices import TransferStatus, ImportStatus
 
 
 class Stats(EmbeddedDocument):
@@ -82,6 +83,21 @@ class RecipientZip(StatableModel):
     
     status = IntField(default=TransferStatus.Unused[0],
                       choices=TransferStatus.choices)
+    
+    
+class ImportTask(StatableModel):
+    ''' recipient zip mongo model '''
+    
+    name = StringField()
+    submitted_on = DateTimeField(default=datetime.datetime.now)
+    
+    email_col_index = IntField(required=True)
+    ignore_header = BooleanField(default=False)
+    zip = ReferenceField(RecipientZip)
+    
+    tokens = ListField(default=[])
+    status = IntField(default=ImportStatus.Queued[0],
+                      choices=ImportStatus.choices)
     
     
     

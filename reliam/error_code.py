@@ -38,3 +38,5 @@ LOGIN_FAILED = (406, 'Wrong email or wrong passwd.')
 INVALID_PARAM = (406, 'parameter {0!s} is invalid.')
 
 RECIPIENT_FILE_TRANSFERED = (409, 'File with same md5 exists at server.')
+ZIP_FILE_CAN_ONLY_HAS_ONE_FILE = (406, 'Zip file can only has one file in it.')
+FILE_TYPE_IS_NOT_ALLOW = (406, 'the file type in this zip is not allowed, allowed list is {0}')

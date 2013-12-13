@@ -21,3 +21,24 @@ class Status(object):
     INVALID = 0
     VALID = 1
     choices = (VALID, INVALID)
+
+
+class TransferStatus(object):
+    Unused = (2, 'Unused')
+    Importing = (3, 'Importing')
+    Imported = (4, 'Imported')
+    choices = (Unused, Importing, Imported)
+    
+class ImportStatus(object):
+    Queued = (2, 'Queued')
+    Importing = (3, 'Importing')
+    Finished = (4, 'Finished')
+    choices = (Queued, Importing, Finished)
+    
+class Ext(object):
+    ZIP = 'zip'
+    TXT = 'txt'
+    
+    @staticmethod
+    def isZip(ext):
+        return Ext.ZIP 
