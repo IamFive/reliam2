@@ -1,0 +1,26 @@
+db.user.insert({
+    "_id": ObjectId("51935e85afc358255c817bf3"),
+    "status": 1,
+    "password": "passwd",
+    "verify_code": "mahkgF",
+    "email": "initial@abc.com"
+});
+
+db.recipient.insert({
+	"_id": ObjectId("5295b31cafc3581b104e6970"),
+	"created": ISODate("2013-11-27T16:53:48.437Z"),
+	"created_by": ObjectId("51935e85afc358255c817bf3"),
+	"email": "xmufive@gmail.com",
+	"modified": ISODate("2013-11-27T16:53:48.471Z"),
+	"modified_by": ObjectId("51935e85afc358255c817bf3"),
+	"stats": {
+		"sent": 0,
+		"open": 0,
+		"click": 0,
+		"conversion": 0,
+		"revenue": 0,
+		"unsubscribe": 0,
+		"complaint": 0
+	},
+	"status": 1
+});

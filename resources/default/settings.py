@@ -32,7 +32,7 @@ RAW_RESOURCE_PATH = [MEDIA_URL_PATH, STATIC_URL_PATH]
 RAW_RESOURCE_ENDWITH = ['.css', '.js', '.jpg', '.ico', '.png']
 
 # when deploy, should remove
-STATIC_FOLDER = r'E:\git\prophet\app'
+STATIC_FOLDER = r'E:\git\prophet\dist'
 
 LEGAL_RECIPIENT_FILE_EXT = ['zip', 'txt', 'csv']
 

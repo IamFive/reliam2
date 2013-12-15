@@ -191,10 +191,13 @@ def init_middlewares():
     cors.set_allowed_origins(*allowed)
 
 
-def startup_app():
-
+def startup_app(config_folder=None):
+    
     # initial settings first, or change to use confd like curupira?
     global app
+    
+    if config_folder:
+        os.environ.setdefault(ResourceLoader.ENV_VAR_NAME, config_folder)
 
     if not app:
         args = setup_flask_initial_options()
