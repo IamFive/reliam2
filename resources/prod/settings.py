@@ -7,4 +7,4 @@ DEBUG = False
 MONGODB_DB = 'reliam'
 MONGODB_HOST = '127.0.0.1'
 
-# FILE_LOG_HANDLER_FODLER = '/var/log/reliam'
+FILE_LOG_HANDLER_FODLER = '/var/log/reliam'
