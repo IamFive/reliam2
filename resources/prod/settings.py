@@ -8,3 +8,6 @@ MONGODB_DB = 'reliam'
 MONGODB_HOST = '127.0.0.1'
 
 FILE_LOG_HANDLER_FODLER = '/var/log/reliam'
+
+FTP_PATH = r'/home/www-data/userfiles/ftp'
+ZIP_PATH = r'/home/www-data/userfiles/uploads'
