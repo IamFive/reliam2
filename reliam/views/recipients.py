@@ -9,23 +9,24 @@ import hashlib
 import os
 from shutil import copyfile
 from string import lower
+import zipfile
 
 from flask.blueprints import Blueprint
 from flask.globals import g, current_app, request
 from flask_login import current_user
 
 from reliam import error_code
+from reliam.choices import FileType
+from reliam.common.choices import ZipFileStatus
 from reliam.common.exceptions import FriendlyException
 from reliam.common.orm import PaginateHelper, PaginationMixin
+from reliam.common.tools.files import headn
 from reliam.common.tools.humansize import size
 from reliam.common.tools.utils import random_file_name, mkdirs
 from reliam.common.web.renderer import smart_render
 from reliam.constants import DEFAULT_RENDER_EXCLUDE
 from reliam.models import Recipient, RecipientForm, RecipientZip, ImportTask
 from reliam.projects import get_ftp_base, get_ftp_path, get_zip_path
-from reliam.common.tools.files import headn
-from reliam.choices import FileType
-import zipfile
 
 
 bp_recipients = Blueprint('recipients', __name__)
@@ -194,18 +195,22 @@ def get_zip(zip_id):
 @bp_recipients.route('/zips/<zip_id>/import', methods=['POST'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def import_zip(zip_id):
-    model = RecipientZip.objects.get_or_404(id=zip_id,
-                                            created_by=current_user.id)
+    rz = RecipientZip.objects.get_or_404(id=zip_id,
+                                         created_by=current_user.id)
     tokens = request.json.get('tokens')
     ignore_header = request.json.get('ignoreHeader')
     email_col_index = request.json.get('emailColIdx')
     
     # need to validate again on backend ?
     
-    name = 'Import file [{0}] into recipient list'.format(model.name)
+    name = 'Import file [{0}] into recipient list'.format(rz.name)
     it = ImportTask(name=name, tokens=tokens, ignore_header=ignore_header,
                     email_col_index=email_col_index, zip=zip_id)
     it.save()
-    # we can detect token maybe
     
-    return it
+    rz.status = ZipFileStatus.Importing[0]
+    rz.save()
+    
+    from reliam.celeryd import import_zip_task
+    result = import_zip_task.apply_async((str(it.id),))
+    return result.task_id

@@ -4,6 +4,7 @@
 '''
 
 DEBUG = False
+CSRF_ENABLED = False
 MONGODB_DB = 'reliam'
 MONGODB_HOST = '127.0.0.1'
 

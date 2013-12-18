@@ -5,16 +5,21 @@
 # Copyright (c) 2011-2013 Woo cupid(iampurse#vip.qq.com)
 #
 
+import json
+from logging import Formatter
+from logging.handlers import TimedRotatingFileHandler
+import os
+import re
+
 from flask import Flask, render_template, request
 from flask.globals import current_app, g
 from flask.wrappers import Response
 from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
-from logging import Formatter
-from logging.handlers import TimedRotatingFileHandler
 from mongoengine.connection import get_db
 from mongoengine.errors import ValidationError
 from pymongo.errors import PyMongoError
+
 from reliam import version_context_processor
 from reliam.common import error_code
 from reliam.common.exceptions import FriendlyException
@@ -28,11 +33,9 @@ from reliam.common.web.context_processor import utility_processor
 from reliam.common.web.renderer import smart_render, JsonResp, RenderFormat, \
     ContentType
 from reliam.constants import ROOT, STATIC_URL_PATH
-import json
-import os
-import re
 
 
+# will be initialed before used, so no worries here.
 app = None
 
 def init_mongo_engine():
@@ -189,7 +192,7 @@ def init_middlewares():
     # Add Access Control Header
     cors = CrossOriginResourceSharing(app)
     cors.set_allowed_origins(*allowed)
-
+    
 
 def startup_app(config_folder=None):
     
@@ -205,7 +208,10 @@ def startup_app(config_folder=None):
 
         app.config.update(ResourceLoader.get().configs)
         app.debug = app.config.get('DEBUG', False)
+        
+        
 
+        
         init_logger()
 
         try:
@@ -218,6 +224,7 @@ def startup_app(config_folder=None):
             # middle ware is the same as interceptor indeed, :)
             init_middlewares()
             init_bp_modules()
+            
             app.logger.info('Start success from ROOT [%s]', ROOT)
         except Exception, e:
             app.logger.error('Start Reliam faild!')

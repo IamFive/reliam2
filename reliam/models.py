@@ -14,7 +14,7 @@ from mongoengine.fields import StringField, DateTimeField, IntField, \
 from reliam.choices import Currency
 from reliam.common.orm import BaseModel
 from reliam.constants import DEFAULT_FORM_EXCLUDE
-from reliam.common.choices import TransferStatus, ImportStatus
+from reliam.common.choices import ZipFileStatus, ImportStatus
 
 
 class Stats(EmbeddedDocument):
@@ -81,8 +81,8 @@ class RecipientZip(StatableModel):
     
     md5 = StringField()
     
-    status = IntField(default=TransferStatus.Unused[0],
-                      choices=TransferStatus.choices)
+    status = IntField(default=ZipFileStatus.Unused[0],
+                      choices=ZipFileStatus.choices)
     
     
 class ImportTask(StatableModel):

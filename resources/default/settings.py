@@ -10,6 +10,7 @@ from reliam.constants import ROOT, STATIC_URL_PATH
 
 DEBUG = False
 CSRF_ENABLED = False
+WTF_CSRF_ENABLED = False
 SECRET_KEY = 'SimpleKEy'
 
 MEDIA_URL_PATH = '/m'
@@ -18,6 +19,7 @@ MEDIA_FOLDER = os.path.join(ROOT, 'medias')
 INIT_DATA_FOLDER_NAME = 'init-mqls'
 
 MONGODB_HOST = '127.0.0.1'
+MONGODB_PORT = 27017
 MONGODB_DB = 'reliam'
 
 LOGGER_ROOT_LEVEL = 'DEBUG'
@@ -32,7 +34,8 @@ RAW_RESOURCE_PATH = [MEDIA_URL_PATH, STATIC_URL_PATH]
 RAW_RESOURCE_ENDWITH = ['.css', '.js', '.jpg', '.ico', '.png']
 
 # when deploy, should remove
-STATIC_FOLDER = r'E:\git\prophet\dist'
+STATIC_FOLDER = r'E:\git\prophet\app'
+# STATIC_FOLDER = r'E:\git\prophet\dist'
 
 LEGAL_RECIPIENT_FILE_EXT = ['zip', 'txt', 'csv']
 
@@ -40,10 +43,26 @@ FTP_PATH = r'E:\git\reliam2\nfs\ftp'
 USERFILES_PATH = r'E:\git\reliam2\nfs\userfiles'
 
 
-# UPLOADED_FILES_DEST = MEDIA_FOLDER
-# UPLOADED_FILES_URL = MEDIA_URL_PATH
-# UPLOADED_FILES_ALLOW
-# UPLOADED_FILES_DENY
-# UPLOADS_DEFAULT_DEST = MEDIA_FOLDER
-# UPLOADS_DEFAULT_URL = MEDIA_URL_PATH
+#===============================================================================
+# Celery
+#===============================================================================
+BROKER_URL = 'mongodb://{}:{}/celery'.format(MONGODB_HOST, MONGODB_PORT)
 
+
+#===============================================================================
+# Celery beat configuration part
+#===============================================================================
+#===============================================================================
+# from datetime import timedelta
+# CELERYBEAT_SCHEDULE = {
+#    'Update Task Status': {
+#        'task': 'test_task',
+#        'schedule': timedelta(seconds=15),
+#    },
+# }
+# CELERY_TIMEZONE = 'UTC'
+# CELERY_IMPORTS = ('reliam.tasks',)
+#===============================================================================
+
+#
+# CELERYD_LOG_FILE = os.path.join(ROOT, 'logs', 'celeryd.log')

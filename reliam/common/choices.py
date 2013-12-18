@@ -23,17 +23,25 @@ class Status(object):
     choices = (VALID, INVALID)
 
 
-class TransferStatus(object):
+class ZipFileStatus(object):
+    
     Unused = (2, 'Unused')
     Importing = (3, 'Importing')
     Imported = (4, 'Imported')
-    choices = (Unused, Importing, Imported)
+    Failed = (5, 'Failed')
+    
+    choices = (Unused, Importing, Imported, Failed)
+    
     
 class ImportStatus(object):
+    
     Queued = (2, 'Queued')
     Importing = (3, 'Importing')
     Finished = (4, 'Finished')
-    choices = (Queued, Importing, Finished)
+    Failed = (5, 'Failed')
+    
+    choices = (Queued, Importing, Finished, Failed)
+    
     
 class Ext(object):
     ZIP = 'zip'
