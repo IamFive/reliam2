@@ -92,6 +92,13 @@ def init_bp_modules():
     def version_handler():
         from reliam import version
         return version()
+    
+    @app.route('/api/printlog', methods=['GET'])
+    @smart_render()
+    def printlog():
+        from reliam.celeryd import printlog
+        result = printlog.apply_async()
+        return result.task_id
 
 
 def init_login_manager():

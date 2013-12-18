@@ -60,3 +60,8 @@ def import_zip_task(zip_id):
     
     print '====================' + zip_id
     return True
+
+@celery.task(name='recipient.printlog')
+def printlog():
+    ''' import recipient list from zip file '''
+    print '========== Celery Task Run =========='
