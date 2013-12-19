@@ -231,6 +231,8 @@ def startup_app(config_folder=None):
             
             app.logger.info('Use `%s` as resource base folder.',
                             ResourceLoader.get().base_folder)
+            app.logger.info('Final customer flask configs are: %s',
+                            json.dumps(ResourceLoader.get().configs, indent=2))
             app.logger.info('Start success from ROOT [%s]', ROOT)
         except Exception, e:
             app.logger.error('Start Reliam faild!')

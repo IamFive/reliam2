@@ -3,7 +3,7 @@
     default value is configed in ``settings.py``;
 '''
 
-DEBUG = False
+DEBUG = True
 CSRF_ENABLED = False
 MONGODB_DB = 'reliam'
 MONGODB_HOST = '127.0.0.1'

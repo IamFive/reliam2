@@ -9,23 +9,23 @@ from reliam.constants import BASE, ROOT
 
 class Resource():
 
-    def __init__(self, path, covered=None):
-        self._path = path
-        self._covered = covered
+    def __init__(self, specified_path, default_path=None):
+        self._default_path = default_path
+        self._specified_path = specified_path
 
     @property
-    def path(self):
-        return self._path
+    def default_path(self):
+        return self._default_path
 
     @property
-    def covered(self):
-        return self._covered
+    def specified_path(self):
+        return self._specified_path
 
     def as_list(self):
         result = []
-        if self._covered:
-            result.append(self._covered)
-        result.append(self._path)
+        if self._default_path:
+            result.append(self._default_path)
+        result.append(self.specified_path)
         return result
 
 
@@ -88,12 +88,12 @@ class ResourceLoader():
             a absolute path
 
         """
-        resource_path = os.path.abspath(os.path.join(self.base_folder, path))
+        specified_path = os.path.abspath(os.path.join(self.base_folder, path))
         if self.covered_folder:
-            to_covered_path = os.path.abspath(os.path.join(self.covered_folder, path))
-            if os.path.exists(to_covered_path):
-                return Resource(to_covered_path, resource_path)
-        return Resource(resource_path)
+            default_path = os.path.abspath(os.path.join(self.covered_folder, path))
+            if os.path.exists(default_path):
+                return Resource(specified_path, default_path)
+        return Resource(specified_path)
 
     @property
     def configs(self):
