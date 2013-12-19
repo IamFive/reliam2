@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
-from celery.app.base import Celery
-from reliam.common.tools.files import get_csv_dialect
-from reliam.projects import get_zip_path
-
-
 '''
 This py file is used for running celery from cmd
 
@@ -14,12 +8,25 @@ Example:
        celeryd -A reliam.celeryd -f e:\crontabs.log
 '''
 
+import datetime
+import os
+
+from celery.app.base import Celery
+
+from reliam.common.tools.env import ResourceLoader
+from reliam.common.tools.files import get_csv_dialect
+from reliam.projects import get_zip_path
+
+
 __test__ = False
 
 
 def init_celery():
     
     from reliam.common.app import startup_app
+    
+    os.environ.setdefault(ResourceLoader.ENV_VAR_NAME,
+                          '/home/www-data/reliam2/resources/prod')
     
     app = startup_app()
     celery = Celery(app.import_name)
