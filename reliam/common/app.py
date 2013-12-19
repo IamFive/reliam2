@@ -216,9 +216,6 @@ def startup_app(config_folder=None):
         app.config.update(ResourceLoader.get().configs)
         app.debug = app.config.get('DEBUG', False)
         
-        
-
-        
         init_logger()
 
         try:
@@ -232,6 +229,8 @@ def startup_app(config_folder=None):
             init_middlewares()
             init_bp_modules()
             
+            app.logger.info('Use `%s` as resource base folder.',
+                            ResourceLoader.get().base_folder)
             app.logger.info('Start success from ROOT [%s]', ROOT)
         except Exception, e:
             app.logger.error('Start Reliam faild!')

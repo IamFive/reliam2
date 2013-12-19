@@ -32,8 +32,7 @@ def init_celery():
     class ContextTask(TaskBase):
         abstract = True
         def __call__(self, *args, **kwargs):
-            print '======== into call'
-            with app.test_request_context():
+            with app.app_context()():
                 return TaskBase.__call__(self, *args, **kwargs)
             
     celery.Task = ContextTask

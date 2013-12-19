@@ -40,7 +40,6 @@ class ResourceLoader():
     def __init__(self):
         self.base_folder = self.init_base_folder()
         self.covered_folder = self.init_covered_folder()
-        print 'Use `' + self.base_folder + '` as resource base folder.'
 
     def _add_sep(self, path):
         return path if path.endswith(os.pathsep) else path + os.path.sep
