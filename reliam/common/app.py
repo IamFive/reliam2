@@ -244,7 +244,7 @@ def startup_app(config_folder=None):
 def init_db():
     with current_app.app_context():
         folder_name = app.config.get('INIT_DATA_FOLDER_NAME')
-        folder_path = ResourceLoader.get().get_resoure(folder_name).path
+        folder_path = ResourceLoader.get().get_resoure(folder_name).specified_path
         if folder_path and os.path.isdir(folder_path):
             for data_file in os.listdir(folder_path):
                 with open(folder_path + os.path.sep + data_file, 'r') as mqls:
