@@ -8,4 +8,4 @@ MONGODB_DB = 'reliam-dev'
 MONGODB_HOST = '127.0.0.1'
 
 FTP_PATH = r'E:\git\reliam2\nfs\ftp'
-ZIP_PATH = r'E:\git\reliam2\nfs\userfiles'
+USERFILES_PATH = r'E:\git\reliam2\nfs\userfiles'
