@@ -90,9 +90,9 @@ class ResourceLoader():
         """
         resource_path = os.path.abspath(os.path.join(self.base_folder, path))
         if self.covered_folder:
-            covered_path = os.path.abspath(os.path.join(self.covered_folder, path))
-            if os.path.exists(covered_path):
-                return Resource(resource_path, covered_path)
+            to_covered_path = os.path.abspath(os.path.join(self.covered_folder, path))
+            if os.path.exists(to_covered_path):
+                return Resource(to_covered_path, resource_path)
         return Resource(resource_path)
 
     @property
