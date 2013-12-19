@@ -32,3 +32,23 @@ Install supervisor
 =====
 
 * install supervisor `apt-get install supervisor`
+* setup celeryd.conf in /etc/supervisor/conf.d/
+```
+	[program:celeryd]
+	command=/home/www-data/reliam2/venv/bin/celery worker --workdir=/home/www-data/reliam2 --pidfile=/var/run/celery/reliam.pid --logfile=/var/log/celery/reliam.log --loglevel=INFO --app=reliam.celeryd
+	environment=RELIAM_RESOURCE_FOLDER='/home/www-data/reliam2/resources/prod'
+	user=www-data
+	group=www-data
+	numprocs=1
+	stdout_logfile=/var/log/celery/celeryd.log
+	stderr_logfile=/var/log/celery/celeryd.log
+	autostart=true
+	autorestart=true
+	startsecs=10
+	stopwaitsecs=600
+```
+* remember change the folder permission for owner www-data
+
+	`chmod +x /var/run/celery /var/log/celery/`
+
+* run supervisor `service supervisor restart`

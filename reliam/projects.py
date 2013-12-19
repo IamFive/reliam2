@@ -10,24 +10,26 @@ import os
 from reliam.common.tools.utils import random_str
 
 
-def get_ftp_base():
+def get_ftp_base(user=None):
     ''' get ftp base path for current user '''
-    user = current_user.get()
+    if not user:
+        user = current_user.get()
     ftp_path = current_app.config.get('FTP_PATH')
     ftp_folder = os.path.abspath(os.path.join(ftp_path, user.email))
+    print ftp_folder
     return ftp_folder
 
+def get_ftp_path(relpath, user=None):
+    return os.path.abspath(os.path.join(get_ftp_base(user), relpath))
 
-def get_ftp_path(relpath):
-    return os.path.abspath(os.path.join(get_ftp_base(), relpath))
 
-
-def get_zip_base():
+def get_zip_base(user=None):
     ''' get zip base path for current user '''
-    user = current_user.get()
+    if not user:
+        user = current_user.get()
     ftp_path = current_app.config.get('USERFILES_PATH')
     ftp_folder = os.path.abspath(os.path.join(ftp_path, user.email))
     return ftp_folder
 
-def get_zip_path(relpath):
-    return os.path.abspath(os.path.join(get_zip_base(), relpath)) 
+def get_zip_path(relpath, user=None):
+    return os.path.abspath(os.path.join(get_zip_base(user), relpath)) 

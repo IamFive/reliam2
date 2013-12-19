@@ -77,7 +77,9 @@ class RecipientZip(StatableModel):
     original_path = StringField()
     
     import_on = DateTimeField(default=datetime.datetime.now)
-    line = IntField()
+    
+    success = IntField()  # success imported count
+    failed = IntField()  # failed imported count
     
     md5 = StringField()
     
@@ -96,6 +98,9 @@ class ImportTask(StatableModel):
     zip = ReferenceField(RecipientZip)
     
     tokens = ListField(default=[])
+    
+    start_time = DateTimeField()
+    end_time = DateTimeField()
     status = IntField(default=ImportStatus.Queued[0],
                       choices=ImportStatus.choices)
     

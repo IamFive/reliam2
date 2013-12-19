@@ -12,7 +12,7 @@
 # # Generic Config
 # plugins-dir=/usr/lib/uwsgi/plugins
 # plugins = http,python
-# #home = %(base)
+# #home = %(base)/venv
 # pythonpath = %(base)
 # chown-socket = www-data
 # socket=/tmp/uwsgi.hive.socket

@@ -20,7 +20,7 @@ from reliam.choices import FileType
 from reliam.common.choices import ZipFileStatus
 from reliam.common.exceptions import FriendlyException
 from reliam.common.orm import PaginateHelper, PaginationMixin
-from reliam.common.tools.files import headn
+from reliam.common.tools.files import headn, get_csv_dialect
 from reliam.common.tools.humansize import size
 from reliam.common.tools.utils import random_file_name, mkdirs
 from reliam.common.web.renderer import smart_render
@@ -178,16 +178,12 @@ def get_zip_list():
 
 @bp_recipients.route('/zips/<zip_id>/desc', methods=['GET'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
-def get_zip(zip_id):
+def get_zip_desc(zip_id):
     model = RecipientZip.objects.get_or_404(id=zip_id,
                                           created_by=current_user.id)
-    zip_path = get_zip_path(model.path)
-    samples = headn(zip_path, 6)
-    sniffer = csv.Sniffer()
-    dialect = sniffer.sniff(samples[-1])
+    samples, dialect = get_csv_dialect(get_zip_path(model.path))
     rows = [row for row in csv.reader(samples, dialect)]
     columns = zip(*rows)
-    
     # we can detect token maybeqwer
     return dict(zip_id=zip_id, tokens=[''] * len(columns), columns=columns)
 

@@ -6,18 +6,27 @@
 #
 import os
 import zipfile
+import csv
 
-def headn(file_name, n=5):
+def headn(path, n=5):
     """Like *x head -N command"""
     result = []
     nlines = 0
     assert n >= 1
-    for line in open(file_name, 'rU'):
-        result.append(line)
-        nlines += 1
-        if nlines >= n:
-            break
+    with open(path, 'rU') as f:
+        for line in f:
+            result.append(line)
+            nlines += 1
+            if nlines >= n:
+                break
     return result
+
+def get_csv_dialect(path):
+    zip_path = path
+    samples = headn(zip_path, 6)
+    sniffer = csv.Sniffer()
+    dialect = sniffer.sniff(samples[-1])
+    return samples, dialect
 
 
 def zip_dir(dirname, zipfilename):
@@ -25,7 +34,7 @@ def zip_dir(dirname, zipfilename):
     if os.path.isfile(dirname):
         filelist.append(dirname)
     else :
-        for root, dirs, files in os.walk(dirname):
+        for root, _, files in os.walk(dirname):
             for name in files:
                 filelist.append(os.path.join(root, name))
         

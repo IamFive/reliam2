@@ -1,28 +1,20 @@
 # -*- coding: utf-8 -*-
+import datetime
+from celery.app.base import Celery
+from reliam.common.tools.files import get_csv_dialect
+from reliam.projects import get_zip_path
 
 
-#===================================================
-# This py file is used for running celery from cmd
-#
-# Example:
-#        celery worker -A reliam2.app
-#        celerybeat -A reliam.celeryd -f e:\celerybeat.log
-#        celeryd -A reliam.celeryd -f e:\crontabs.log
-#===================================================
+'''
+This py file is used for running celery from cmd
 
-
-# set default resource path
-# if not os.environ.has_key(ResourceLoader.ENV_VAR_NAME):
-#    resource_folder = '/var/www/reliam2/resources'
-#    os.environ.setdefault(ResourceLoader.ENV_VAR_NAME, resource_folder)
-
-# need to initial Flask-APP
+Example:
+       celery worker -A reliam2.app
+       celerybeat -A reliam.celeryd -f e:\celerybeat.log
+       celeryd -A reliam.celeryd -f e:\crontabs.log
+'''
 
 __test__ = False
-
-
-from celery.app.base import Celery
-
 
 
 def init_celery():
@@ -40,7 +32,8 @@ def init_celery():
     class ContextTask(TaskBase):
         abstract = True
         def __call__(self, *args, **kwargs):
-            with app.app_context():
+            print '======== into call'
+            with app.test_request_context():
                 return TaskBase.__call__(self, *args, **kwargs)
             
     celery.Task = ContextTask
@@ -50,16 +43,82 @@ def init_celery():
 # initial celery
 celery = init_celery()
 
+print celery.Task
+
 
 #==============================================================================
 #  Task definition starts
 #==============================================================================
-@celery.task(name='recipient.ImportZip')
+@celery.task()
 def import_zip_task(zip_id):
     ''' import recipient list from zip file '''
     
-    print '====================' + zip_id
-    return True
+    # TODO i don't know why ContextTask context is not work here
+    # will check it later
+    with celery.app.app_context():
+        
+        print 'Start import zip task for zip id : [' + zip_id + ']'
+    
+        import csv
+        from reliam.models import User
+        from reliam.models import ImportTask, Recipient
+        from reliam.common.choices import ImportStatus, ZipFileStatus
+        
+        # update import task status
+        it = ImportTask.objects.get_or_404(id=zip_id)
+        it.start_time = datetime.datetime.now()
+        it.status = ImportStatus.Importing[0]
+        it.save()
+        
+        # parse recipient file
+        zipfile = it.zip
+        user = User.objects.get(id=zipfile.created_by)
+        abs_zipfile_path = get_zip_path(zipfile.path, user)
+        _, dialect = get_csv_dialect(abs_zipfile_path)
+        
+        success = 0
+        failed = 0
+        column_size = len(it.tokens)
+        with open(abs_zipfile_path, 'rU') as f:
+            reader = csv.reader(f, dialect)
+            
+            first = True
+            produced = []
+            for row in reader:
+                
+                if it.ignore_header and first:
+                    first = False
+                    continue
+                
+                if len(row) != column_size:
+                    failed = failed + 1
+                else:
+                    # TODO need to validate here
+                    email = row[it.email_col_index]  # get email value
+                    as_list = it.tokens, row
+                    mapped = dict((item[0], item[1]) for item in zip(*as_list)
+                                  if item[0] != '' and item[0] != 'email')
+                    produced.append(Recipient(email=email, props=mapped, created_by=user.id))
+                    success = success + 1
+                if len(produced) >= 300:
+                    Recipient.objects.insert(produced)
+                    produced = []
+                    
+            if len(produced) >= 0:
+                Recipient.objects.insert(produced)
+            
+            # update zip file
+            zipfile.success = success
+            zipfile.failed = failed
+            zipfile.status = ZipFileStatus.Imported[0]
+            zipfile.save()
+            
+            # update import task
+            it.end_time = datetime.datetime.now()
+            it.status = ImportStatus.Finished[0]
+            it.save()
+        
+        print 'Import zip task for zip id : [' + zip_id + '] finished'
 
 @celery.task(name='recipient.printlog')
 def printlog():
