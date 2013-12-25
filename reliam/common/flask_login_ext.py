@@ -22,7 +22,7 @@ class SessionUserMixin(UserMixin):
     @property
     def status(self):
         return self.orignal.status
-
+    
     def get(self):
         return self.orignal
 

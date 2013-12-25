@@ -16,6 +16,7 @@ from celery.app.base import Celery
 from reliam.common.tools.env import ResourceLoader
 from reliam.common.tools.files import get_csv_dialect
 from reliam.projects import get_zip_path
+from mongoengine.fields import EmailField
 
 
 __test__ = False
@@ -49,8 +50,6 @@ def init_celery():
 # initial celery
 celery = init_celery()
 
-print celery.Task
-
 
 #==============================================================================
 #  Task definition starts
@@ -58,6 +57,26 @@ print celery.Task
 @celery.task()
 def import_zip_task(zip_id):
     ''' import recipient list from zip file '''
+    
+    logger = import_zip_task.get_logger()
+    
+    def batch_save(produced):
+        success = 0
+        try:
+            Recipient.objects.insert(produced)
+            success = success + len(produced)
+        except:
+            logger.warn('batch insert recipients failed, will try insert one by one')
+            # we insert one by one
+            for r in produced:
+                try:
+                    r.save()
+                    success = success + 1
+                except Exception, e:
+                    logger.exception(e)
+        
+        produced = []
+        return success
     
     # TODO i don't know why ContextTask context is not work here
     # will check it later
@@ -83,39 +102,39 @@ def import_zip_task(zip_id):
         _, dialect = get_csv_dialect(abs_zipfile_path)
         
         success = 0
-        failed = 0
         column_size = len(it.tokens)
         with open(abs_zipfile_path, 'rU') as f:
             reader = csv.reader(f, dialect)
             
             first = True
             produced = []
+            total = 0
             for row in reader:
-                
+                total = total + 1
                 if it.ignore_header and first:
                     first = False
                     continue
                 
-                if len(row) != column_size:
-                    failed = failed + 1
-                else:
+                if len(row) == column_size:
                     # TODO need to validate here
                     email = row[it.email_col_index]  # get email value
-                    as_list = it.tokens, row
-                    mapped = dict((item[0], item[1]) for item in zip(*as_list)
-                                  if item[0] != '' and item[0] != 'email')
-                    produced.append(Recipient(email=email, props=mapped, created_by=user.id))
-                    success = success + 1
-                if len(produced) >= 300:
-                    Recipient.objects.insert(produced)
-                    produced = []
+                    if EmailField.EMAIL_REGEX.match(email):
+                        as_list = it.tokens, row
+                        mapped = dict((item[0], item[1]) for item in zip(*as_list)
+                                      if item[0] != '' and item[0] != 'email')
+                        produced.append(Recipient(email=email, props=mapped, created_by=user.id))
+                
+                if len(produced) % 300 == 0:
+                    s = batch_save(produced)
+                    success = success + s
                     
             if len(produced) >= 0:
-                Recipient.objects.insert(produced)
+                s = batch_save(produced)
+                success = success + s
             
             # update zip file
             zipfile.success = success
-            zipfile.failed = failed
+            zipfile.failed = total - success
             zipfile.status = ZipFileStatus.Imported[0]
             zipfile.save()
             
