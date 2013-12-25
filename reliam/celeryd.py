@@ -10,6 +10,7 @@ Example:
 
 import datetime
 import os
+import logging
 
 from celery.app.base import Celery
 
@@ -26,8 +27,8 @@ def init_celery():
     
     from reliam.common.app import startup_app
     
-    os.environ.setdefault(ResourceLoader.ENV_VAR_NAME,
-                          '/home/www-data/reliam2/resources/prod')
+#     os.environ.setdefault(ResourceLoader.ENV_VAR_NAME,
+#                           '/home/www-data/reliam2/resources/prod')
     
     app = startup_app()
     celery = Celery(app.import_name)
@@ -58,7 +59,6 @@ celery = init_celery()
 def import_zip_task(zip_id):
     ''' import recipient list from zip file '''
     
-    logger = import_zip_task.get_logger()
     
     def batch_save(produced):
         success = 0
@@ -66,16 +66,16 @@ def import_zip_task(zip_id):
             Recipient.objects.insert(produced)
             success = success + len(produced)
         except:
-            logger.warn('batch insert recipients failed, will try insert one by one')
+            logging.warn('batch insert recipients failed, will try insert one by one')
             # we insert one by one
             for r in produced:
                 try:
                     r.save()
                     success = success + 1
                 except Exception, e:
-                    logger.exception(e)
+                    logging.exception(e)
         
-        produced = []
+        
         return success
     
     # TODO i don't know why ContextTask context is not work here
@@ -127,6 +127,7 @@ def import_zip_task(zip_id):
                 if len(produced) % 300 == 0:
                     s = batch_save(produced)
                     success = success + s
+                    produced = []
                     
             if len(produced) >= 0:
                 s = batch_save(produced)
