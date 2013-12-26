@@ -9,12 +9,10 @@ Example:
 '''
 
 import datetime
-import os
 import logging
 
 from celery.app.base import Celery
 
-from reliam.common.tools.env import ResourceLoader
 from reliam.common.tools.files import get_csv_dialect
 from reliam.projects import get_zip_path
 from mongoengine.fields import EmailField
@@ -100,6 +98,9 @@ def import_zip_task(zip_id):
         user = User.objects.get(id=zipfile.created_by)
         abs_zipfile_path = get_zip_path(zipfile.path, user)
         _, dialect = get_csv_dialect(abs_zipfile_path)
+        
+        
+        # how to handle duplicate here
         
         success = 0
         column_size = len(it.tokens)
