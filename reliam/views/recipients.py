@@ -71,7 +71,7 @@ def update_recipient(recipient_id):
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def delete_recipient(recipient_id):
     recipient = Recipient.objects.get_or_404(id=recipient_id,
-                                           created_by=current_user.id)
+                                             created_by=current_user.id)
     recipient.delete()
     return True
 

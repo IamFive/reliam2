@@ -123,7 +123,9 @@ def import_zip_task(zip_id):
                         as_list = it.tokens, row
                         mapped = dict((item[0], item[1]) for item in zip(*as_list)
                                       if item[0] != '' and item[0] != 'email')
-                        produced.append(Recipient(email=email, props=mapped, created_by=user.id))
+                        produced.append(Recipient(email=email, props=mapped,
+                                                  created_by=user.id,
+                                                  zip=zipfile))
                 
                 if len(produced) % 300 == 0:
                     s = batch_save(produced)

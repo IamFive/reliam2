@@ -56,12 +56,6 @@ class User(BaseModel):
     }
     
     
-class Recipient(StatableModel):
-    ''' recipient mongo model '''
-    
-    email = EmailField(required=True)
-    props = DictField()
-    
     
 class RecipientZip(StatableModel):
     ''' recipient zip mongo model '''
@@ -85,6 +79,15 @@ class RecipientZip(StatableModel):
     
     status = IntField(default=ZipFileStatus.Unused[0],
                       choices=ZipFileStatus.choices)
+    
+    
+class Recipient(StatableModel):
+    ''' recipient mongo model '''
+    
+    email = EmailField(required=True)
+    props = DictField()
+    zip = ReferenceField(RecipientZip)
+    tags = ListField(StringField())
     
     
 class ImportTask(StatableModel):
