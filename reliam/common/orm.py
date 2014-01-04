@@ -63,17 +63,18 @@ class BaseQuerySetMixin(BaseQuerySet):
 
         if sort:
             querySet = querySet.order_by(sort)
+        
 
         paginate = PaginationMixin(querySet, page, limit)
-        return paginate.to_dict()
+        return paginate
 
 
 class PaginationMixin(Pagination):
 
-    def __init__(self, iterable, page, limit):
+    def __init__(self, querySet, page, limit):
 
-        self.iterable = iterable
-        self.total = len(iterable)
+        self.querySet = querySet
+        self.total = querySet.count()
         self.page = page
         self.limit = limit
 
@@ -81,7 +82,7 @@ class PaginationMixin(Pagination):
         end_index = page * limit
 
         if start_index <= self.total:
-            self.items = iterable[start_index:end_index]
+            self.items = querySet[start_index:end_index]
             if isinstance(self.items, QuerySet):
                 self.items = self.items.select_related()
 

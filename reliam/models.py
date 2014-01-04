@@ -87,10 +87,12 @@ class Recipient(StatableModel):
     email = EmailField(required=True)
     props = DictField()
     zip = ReferenceField(RecipientZip)
+    
+    listname = StringField()
     tags = ListField(StringField())
     
     meta = {
-        'indexes': ['email']
+        'indexes': ['modified', 'zip']
     }
     
     
@@ -105,6 +107,9 @@ class ImportTask(StatableModel):
     zip = ReferenceField(RecipientZip)
     
     tokens = ListField(default=[])
+    
+    listname = StringField()
+    tags = ListField(StringField())
     
     start_time = DateTimeField()
     end_time = DateTimeField()

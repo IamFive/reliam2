@@ -10,6 +10,7 @@ from bson.objectid import ObjectId
 from mongoengine.document import Document, DynamicDocument
 from mongoengine.queryset import QuerySet
 from bson.dbref import DBRef
+from reliam.common.orm import PaginationMixin
 
 class MongoExtEncoder(json.JSONEncoder):
     """json encoder for mongoengine model
@@ -71,7 +72,9 @@ class MongoExtEncoder(json.JSONEncoder):
         return source
 
     def default(self, obj):
-        if isinstance(obj, QuerySet):
+        if isinstance(obj, PaginationMixin):
+            return obj.to_dict()
+        elif isinstance(obj, QuerySet):
             iterable = iter(obj)
             return list(iterable)
         elif isinstance(obj, (Document, DynamicDocument)):
