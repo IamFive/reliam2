@@ -89,6 +89,10 @@ class Recipient(StatableModel):
     zip = ReferenceField(RecipientZip)
     tags = ListField(StringField())
     
+    meta = {
+        'indexes': ['email']
+    }
+    
     
 class ImportTask(StatableModel):
     ''' recipient zip mongo model '''
