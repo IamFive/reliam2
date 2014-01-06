@@ -11,6 +11,8 @@ import unittest
 from reliam.models import Campaign, Template, Recipient, RecipientZip, \
     ImportTask
 from reliam_tests import BasicTestCase
+from mongoengine.document import Document
+from mongoengine.fields import StringField, ListField
 
 
 class Test(BasicTestCase):
@@ -76,6 +78,30 @@ class Test(BasicTestCase):
         
         print it.zip
         
+    def test_get_tags(self):
+        ImportTask(email_col_index=0, tags=['aa', 'bb']).save()
+        ImportTask(email_col_index=0, tags=['aa', 'cc']).save()
+        ImportTask(email_col_index=0, tags=['cc', 'dd']).save()
+        
+        
+        tag_freqs = ImportTask.objects(tags__contains='a').item_frequencies('tags', normalize=True)
+        
+        from operator import itemgetter
+        top_tags = sorted(tag_freqs.items(), key=itemgetter(1), reverse=True)[:2]
+        print top_tags
+        
+    def test_filter_tags(self):
+        class Post(Document):
+            title = StringField()
+            tags = ListField(StringField())
+        
+#         post1 = Post(title='Fun with MongoEngine', tags=['mongodb', 'mongoengine']).save()
+#         post2 = Post(title='Loving Mongo', tags=['mongodb']).save()
+#         post2 = Post(title='Loving Mongo', tags=['mongodb']).save()
+#         post2 = Post(title='Loving Mongo', tags=['mongo2']).save()
+        
+        posts = Post.objects(tags__contains='mongodb').item_frequencies('tags')
+        print posts
         
         
 if __name__ == "__main__":

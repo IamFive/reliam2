@@ -156,6 +156,7 @@ def init_error_handler():
 
     @app.errorhandler(PyMongoError)
     def mongo_op_ex_handler(error, status=400):
+        app.logger.exception(error)
         ex = FriendlyException(400, str(error))
         return handler_ex(ex, status)
 

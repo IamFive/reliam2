@@ -188,12 +188,43 @@ def get_zip_desc(zip_id):
     return dict(zip_id=zip_id, tokens=[''] * len(columns), columns=columns)
 
 
+
+@bp_recipients.route('/zips/imports', methods=['GET'])
+@smart_render(only=('listname',))
+def get_import_list():
+    where = PaginateHelper.owner_mixin_filter()
+    paginate = ImportTask.objects().paginate(
+        exclude=DEFAULT_RENDER_EXCLUDE,
+        where=where
+    )
+    return paginate
+
+
+@bp_recipients.route('/zips/imports/tags', methods=['GET'])
+@bp_recipients.route('/zips/imports/tags/', methods=['GET'])
+@smart_render(only=('listname',))
+def get_import_tags():
+    q = request.values.get('q', None)
+    f = {} if not q else {'tags__contains' : q}
+    tasks = ImportTask.objects(**f)
+    count = tasks.count()
+    if count != 0:
+        tag_freqs = tasks.item_frequencies('tags', normalize=True)
+        from operator import itemgetter
+        t2d_tags = sorted(tag_freqs.items(), key=itemgetter(1), reverse=True)
+        return [item[0] for item in t2d_tags[:10]]
+    else:
+        return []
+
+
 @bp_recipients.route('/zips/<zip_id>/import', methods=['POST'])
 @smart_render(exclude=DEFAULT_RENDER_EXCLUDE)
 def import_zip(zip_id):
     rz = RecipientZip.objects.get_or_404(id=zip_id,
                                          created_by=current_user.id)
+    tags = request.json.get('tags')
     tokens = request.json.get('tokens')
+    listname = request.json.get('listname')
     ignore_header = request.json.get('ignoreHeader')
     email_col_index = request.json.get('emailColIdx')
     
@@ -201,7 +232,8 @@ def import_zip(zip_id):
     
     name = 'Import file [{0}] into recipient list'.format(rz.name)
     it = ImportTask(name=name, tokens=tokens, ignore_header=ignore_header,
-                    email_col_index=email_col_index, zip=zip_id)
+                    email_col_index=email_col_index, zip=zip_id,
+                    listname=listname, tags=tags)
     it.save()
     
     rz.status = ZipFileStatus.Importing[0]
