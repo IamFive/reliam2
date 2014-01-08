@@ -7,6 +7,7 @@
 import os
 import zipfile
 import csv
+import logging
 
 def headn(path, n=5):
     """Like *x head -N command"""
@@ -25,7 +26,13 @@ def get_csv_dialect(path):
     zip_path = path
     samples = headn(zip_path, 6)
     sniffer = csv.Sniffer()
-    dialect = sniffer.sniff(samples[-1])
+    try:
+        with open(path, 'rU') as f:
+            dialect = sniffer.sniff(f.read(1024),
+                                    delimiters=[',', '\t', ' ', ':', ';', '|'])
+    except Exception, e:
+        logging.info('cant detect delimiter for csv line: ' + samples[-1])
+        dialect = None
     return samples, dialect
 
 

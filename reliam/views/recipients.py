@@ -182,7 +182,10 @@ def get_zip_desc(zip_id):
     model = RecipientZip.objects.get_or_404(id=zip_id,
                                           created_by=current_user.id)
     samples, dialect = get_csv_dialect(get_zip_path(model.path))
-    rows = [row for row in csv.reader(samples, dialect)]
+    if dialect:
+        rows = [row for row in csv.reader(samples, dialect)]
+    else:
+        rows = [row for row in csv.reader(samples)]
     columns = zip(*rows)
     # we can detect token maybeqwer
     return dict(zip_id=zip_id, tokens=[''] * len(columns), columns=columns)

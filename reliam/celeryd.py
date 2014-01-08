@@ -105,7 +105,10 @@ def import_zip_task(zip_id):
         success = 0
         column_size = len(it.tokens)
         with open(abs_zipfile_path, 'rU') as f:
-            reader = csv.reader(f, dialect)
+            if dialect:
+                reader = csv.reader(f, dialect)
+            else:
+                reader = csv.reader(f)
             
             first = True
             produced = []
